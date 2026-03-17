@@ -26,3 +26,16 @@ jobs:
 
       - name: Build a spuštění testů (Maven)
         run: ./mvnw -B clean verify
+
+      - name: Nahrání testovacích reportů
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: target/surefire-reports/
+
+      - name: Nahrání Code Coverage reportu (JaCoCo)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: target/site/jacoco/
