@@ -1,0 +1,18 @@
+# --- Fáze 1: Build (Reprodukovatelný build) ---
+FROM eclipse-temurin:21-jdk-alpine AS builder
+WORKDIR /app
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+COPY src ./src
+RUN ./mvnw clean package -DskipTests
+
+# --- Fáze 2: Běh (Malá velikost image) ---
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
