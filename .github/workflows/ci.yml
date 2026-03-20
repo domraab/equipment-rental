@@ -105,6 +105,9 @@ jobs:
             --from-literal=password=${{ secrets.DB_PASSWORD }} \
             -n staging
 
+      - name: Nasazení ConfigMap do Stagingu
+        run: kubectl apply -f k8s/configmap.yaml -n staging
+
       - name: Nasazení databáze do Stagingu
         run: kubectl apply -f k8s/postgres.yaml -n staging
 
