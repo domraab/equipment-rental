@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equipment-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: equipment-app
+  template:
+    metadata:
+      labels:
+        app: equipment-app
+    spec:
+      containers:
+        - name: equipment-app
+          image: ghcr.io/domraab/equipment-rental:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/equipment_db
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: equipment-service
+spec:
+  selector:
+    app: equipment-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
