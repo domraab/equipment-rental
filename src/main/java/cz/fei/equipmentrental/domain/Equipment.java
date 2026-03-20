@@ -17,7 +17,7 @@ public class Equipment {
     private String name;
     private BigDecimal dailyRate;
 
-    protected Equipment() {}
+    public Equipment() {}
 
     public Equipment(String name, BigDecimal dailyRate) {
         this.name = name;
@@ -33,5 +33,13 @@ public class Equipment {
 
     public BigDecimal getDailyRate() {
         return dailyRate;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDailyRate(BigDecimal dailyRate) {
+        this.dailyRate = dailyRate;
     }
 }
