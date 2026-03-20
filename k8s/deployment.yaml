@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: equipment-app
-          image: ghcr.io/domraab/equipment-rental
+          image: ghcr.io/domraab/equipment-rental:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

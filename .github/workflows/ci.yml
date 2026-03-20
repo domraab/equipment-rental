@@ -44,6 +44,9 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build a spuštění testů (Maven)
+        env:
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: ./mvnw -B clean verify
 
       - name: Statická analýza kódu (PMD)
@@ -75,3 +78,46 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+
+  deploy-staging:
+    name: CD - Nasazení do Staging prostředí
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stáhnutí kódu z repozitáře
+        uses: actions/checkout@v4
+
+      - name: Vytvoření lokálního K8s clusteru (KinD)
+        uses: helm/kind-action@v1.10.0
+        with:
+          cluster_name: kind-cluster
+
+      - name: Vytvoření prostředí (Namespaces)
+        run: |
+          kubectl create namespace staging
+          kubectl create namespace production
+
+      - name: Bezpečné vytvoření K8s Secret pro databázi
+        run: |
+          kubectl create secret generic db-credentials \
+            --from-literal=username=${{ secrets.DB_USER }} \
+            --from-literal=password=${{ secrets.DB_PASSWORD }} \
+            -n staging
+
+      - name: Nasazení databáze do Stagingu
+        run: kubectl apply -f k8s/postgres.yaml -n staging
+
+      - name: Nasazení aplikace do Stagingu
+        run: kubectl apply -f k8s/deployment.yaml -n staging
+
+      - name: Závěrečný test (Ověření, že se pody úspěšně spustily)
+        run: |
+          echo "Čekám na spuštění databáze..."
+          kubectl rollout status deployment/postgres-db -n staging --timeout=90s
+          
+          echo "Čekám na spuštění aplikace..."
+          kubectl rollout status deployment/equipment-app -n staging --timeout=120s
+          
+          echo "Výpis běžících kontejnerů:"
+          kubectl get pods -n staging
