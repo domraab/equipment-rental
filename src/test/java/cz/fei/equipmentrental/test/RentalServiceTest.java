@@ -48,7 +48,7 @@ public class RentalServiceTest {
         LocalDate endDate = LocalDate.of(2023, 10, 15);
         Long equipmentId = 5L;
 
-        when(mockRepository.isEquipmentAvailable(equipmentId, startDate, endDate));
+        when(mockRepository.isEquipmentAvailable(equipmentId, startDate, endDate)).thenReturn(false);;
 
         RentalService rentalService = new RentalService(mockRepository);
 
