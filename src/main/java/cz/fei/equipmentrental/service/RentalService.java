@@ -18,5 +18,12 @@ public class RentalService {
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("Datum konce vypůjčení nesmí být před začátkem");
         }
+
+        if (rentalRepository != null) {
+            long activeRentals = rentalRepository.countActiveRentalsByUserId(userId);
+            if (activeRentals >= 3 ) {
+                throw new IllegalStateException("Zákazník nesmí mít více než 3 aktivní výpůjčky.");
+            }
+        }
     }
 }
