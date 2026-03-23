@@ -39,4 +39,21 @@ public class RentalServiceTest {
             rentalService.createRental(1L, 1L, startDate, endDate);
         });
     }
+
+    @Test
+    void shoudlThrowExceptionWhenEquipmentIsAlreadyRentedInGivenPeriod() {
+        RentalRepository mockRepository = Mockito.mock(RentalRepository.class);
+
+        LocalDate startDate = LocalDate.of(2023, 10, 10);
+        LocalDate endDate = LocalDate.of(2023, 10, 15);
+        Long equipmentId = 5L;
+
+        when(mockRepository.isEquipmentAvailable(equipmentId, startDate, endDate));
+
+        RentalService rentalService = new RentalService(mockRepository);
+
+        assertThrows(IllegalStateException.class, () -> {
+            rentalService.createRental(1L, equipmentId, startDate, endDate);
+        });
+    }
 }
