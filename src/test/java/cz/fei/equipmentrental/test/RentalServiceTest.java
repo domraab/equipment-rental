@@ -56,4 +56,23 @@ public class RentalServiceTest {
             rentalService.createRental(1L, equipmentId, startDate, endDate);
         });
     }
+
+    @Test
+    void shouldApplyTenPercentDiscountForRentalsSevenDaysOrLonger() {
+        RentalRepository mockRepository = Mockito.mock(RentalRepository.class);
+
+        Long equipmentId = 2L;
+        LocalDate startDate = LocalDate.of(2023, 10, 1);
+        LocalDate endDate = LocalDate.of(2023, 10, 11);
+
+        when(mockRepository.isEquipmentAvailable(equipmentId, startDate, endDate)).thenReturn(true);
+        when(mockRepository.countActiveRentalsByUserId(1L)).thenReturn(0L);
+        when(mockRepository.getDailyRate(equipmentId)).thenReturn(new java.math.BigDecimal("100.00"));
+
+        RentalService rentalService = new RentalService(mockRepository);
+
+        java.math.BigDecimal totalPrice = rentalService.createRental(1l, equipmentId, startDate, endDate);
+
+        org.junit.jupiter.api.Assertions.assertEquals(new java.math.BigDecimal("900.00"), totalPrice);
+    }
 }

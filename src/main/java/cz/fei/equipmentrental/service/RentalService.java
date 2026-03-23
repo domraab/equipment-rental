@@ -14,7 +14,7 @@ public class RentalService {
     public RentalService() {
     }
 
-    public void createRental(Long userId, Long equipmentId, LocalDate startDate, LocalDate endDate) {
+    public java.math.BigDecimal createRental(Long userId, Long equipmentId, LocalDate startDate, LocalDate endDate) {
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("Datum konce vypůjčení nesmí být před začátkem");
         }
@@ -31,5 +31,7 @@ public class RentalService {
                 throw new IllegalStateException("Vybavení je v tomto termínu již půjčené.");
             }
         }
+
+        return java.math.BigDecimal.ZERO;
     }
 }
