@@ -1,4 +1,5 @@
 package cz.fei.equipmentrental.domain;
 
-public class RentalRepository {
+public interface RentalRepository {
+    long countActiveRentalsByUserId(Long userID);
 }
