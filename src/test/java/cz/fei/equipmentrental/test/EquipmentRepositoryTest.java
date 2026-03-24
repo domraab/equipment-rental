@@ -1,8 +1,8 @@
 package cz.fei.equipmentrental.test;
 
 
-import cz.fei.equipmentrental.domain.Equipment;
-import cz.fei.equipmentrental.domain.EquipmentRepository;
+import cz.fei.equipmentrental.entity.Equipment;
+import cz.fei.equipmentrental.repository.EquipmentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

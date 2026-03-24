@@ -1,6 +1,12 @@
 package cz.fei.equipmentrental.service;
 
-import cz.fei.equipmentrental.domain.RentalRepository;
+import cz.fei.equipmentrental.entity.Equipment;
+import cz.fei.equipmentrental.entity.Rental;
+import cz.fei.equipmentrental.entity.User;
+import cz.fei.equipmentrental.repository.EquipmentRepository;
+import cz.fei.equipmentrental.repository.RentalRepository;
+import cz.fei.equipmentrental.repository.UserRepository;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -9,6 +15,14 @@ import java.time.temporal.ChronoUnit;
 public class RentalService {
 
     private RentalRepository rentalRepository;
+    private UserRepository userRepository;
+    private EquipmentRepository equipmentRepository;
+
+    public RentalService(RentalRepository rentalRepository, UserRepository userRepository, EquipmentRepository equipmentRepository) {
+        this.rentalRepository = rentalRepository;
+        this.userRepository = userRepository;
+        this.equipmentRepository = equipmentRepository;
+    }
 
     public RentalService(RentalRepository rentalRepository) {
         this.rentalRepository = rentalRepository;
@@ -23,7 +37,19 @@ public class RentalService {
         if (rentalRepository != null) {
             checkUserRentalLimits(userId);
             checkEquipmentAvailability(equipmentId, startDate, endDate);
-            return calculateTotalPrice(equipmentId, startDate, endDate);
+            BigDecimal totalPrice = calculateTotalPrice(equipmentId, startDate, endDate);
+
+            if (userRepository != null && equipmentRepository != null) {
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("Uživatel nenalezen"));
+                Equipment equipment = equipmentRepository.findById(equipmentId)
+                        .orElseThrow(() -> new IllegalArgumentException("Vybavení nenalezeno"));
+
+                Rental rental = new Rental(user, equipment, startDate, endDate, totalPrice);
+                rentalRepository.save(rental);
+            }
+
+            return totalPrice;
         }
 
         return BigDecimal.ZERO;

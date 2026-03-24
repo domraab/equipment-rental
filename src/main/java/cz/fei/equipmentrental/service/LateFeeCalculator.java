@@ -1,4 +1,4 @@
-package cz.fei.equipmentrental.domain;
+package cz.fei.equipmentrental.service;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package cz.fei.equipmentrental.domain;
+package cz.fei.equipmentrental.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

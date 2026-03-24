@@ -1,8 +1,8 @@
 package cz.fei.equipmentrental.controller;
 
 
-import cz.fei.equipmentrental.domain.Equipment;
-import cz.fei.equipmentrental.domain.EquipmentRepository;
+import cz.fei.equipmentrental.entity.Equipment;
+import cz.fei.equipmentrental.repository.EquipmentRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
