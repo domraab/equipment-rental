@@ -52,4 +52,3 @@ public class Rental {
     public BigDecimal getTotalPrice() { return totalPrice; }
     public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
 }
-}
