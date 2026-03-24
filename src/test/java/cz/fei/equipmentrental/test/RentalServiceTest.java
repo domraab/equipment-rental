@@ -1,6 +1,6 @@
 package cz.fei.equipmentrental.test;
 
-import cz.fei.equipmentrental.domain.RentalRepository;
+import cz.fei.equipmentrental.repository.RentalRepository;
 import cz.fei.equipmentrental.service.RentalService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

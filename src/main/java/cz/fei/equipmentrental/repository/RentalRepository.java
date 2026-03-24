@@ -1,4 +1,4 @@
-package cz.fei.equipmentrental.domain;
+package cz.fei.equipmentrental.repository;
 
 import java.time.LocalDate;
 

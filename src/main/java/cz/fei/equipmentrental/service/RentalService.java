@@ -1,6 +1,6 @@
 package cz.fei.equipmentrental.service;
 
-import cz.fei.equipmentrental.domain.RentalRepository;
+import cz.fei.equipmentrental.repository.RentalRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;

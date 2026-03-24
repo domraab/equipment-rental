@@ -1,6 +1,6 @@
 package cz.fei.equipmentrental.test;
 
-import cz.fei.equipmentrental.domain.LateFeeCalculator;
+import cz.fei.equipmentrental.service.LateFeeCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
