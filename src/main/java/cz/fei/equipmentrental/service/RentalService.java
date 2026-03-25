@@ -6,12 +6,14 @@ import cz.fei.equipmentrental.entity.User;
 import cz.fei.equipmentrental.repository.EquipmentRepository;
 import cz.fei.equipmentrental.repository.RentalRepository;
 import cz.fei.equipmentrental.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Service
 public class RentalService {
 
     private RentalRepository rentalRepository;
