@@ -16,9 +16,11 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class RentalService {
 
-    private RentalRepository rentalRepository;
-    private UserRepository userRepository;
-    private EquipmentRepository equipmentRepository;
+
+    private final RentalRepository rentalRepository;
+    private final UserRepository userRepository;
+    private final EquipmentRepository equipmentRepository;
+
 
     public RentalService(RentalRepository rentalRepository, UserRepository userRepository, EquipmentRepository equipmentRepository) {
         this.rentalRepository = rentalRepository;
@@ -26,35 +28,23 @@ public class RentalService {
         this.equipmentRepository = equipmentRepository;
     }
 
-    public RentalService(RentalRepository rentalRepository) {
-        this.rentalRepository = rentalRepository;
-    }
-
-    public RentalService() {
-    }
-
     public BigDecimal createRental(Long userId, Long equipmentId, LocalDate startDate, LocalDate endDate) {
         validateDates(startDate, endDate);
 
-        if (rentalRepository != null) {
-            checkUserRentalLimits(userId);
-            checkEquipmentAvailability(equipmentId, startDate, endDate);
-            BigDecimal totalPrice = calculateTotalPrice(equipmentId, startDate, endDate);
 
-            if (userRepository != null && equipmentRepository != null) {
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("Uživatel nenalezen"));
-                Equipment equipment = equipmentRepository.findById(equipmentId)
-                        .orElseThrow(() -> new IllegalArgumentException("Vybavení nenalezeno"));
+        checkUserRentalLimits(userId);
+        checkEquipmentAvailability(equipmentId, startDate, endDate);
+        BigDecimal totalPrice = calculateTotalPrice(equipmentId, startDate, endDate);
 
-                Rental rental = new Rental(user, equipment, startDate, endDate, totalPrice);
-                rentalRepository.save(rental);
-            }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Uživatel nenalezen"));
+        Equipment equipment = equipmentRepository.findById(equipmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Vybavení nenalezeno"));
 
-            return totalPrice;
-        }
+        Rental rental = new Rental(user, equipment, startDate, endDate, totalPrice);
+        rentalRepository.save(rental);
 
-        return BigDecimal.ZERO;
+        return totalPrice;
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {

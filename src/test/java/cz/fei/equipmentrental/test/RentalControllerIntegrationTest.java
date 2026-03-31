@@ -3,6 +3,7 @@ package cz.fei.equipmentrental.test;
 import cz.fei.equipmentrental.entity.Equipment;
 import cz.fei.equipmentrental.entity.User;
 import cz.fei.equipmentrental.repository.EquipmentRepository;
+import cz.fei.equipmentrental.repository.RentalRepository;
 import cz.fei.equipmentrental.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +35,17 @@ public class RentalControllerIntegrationTest {
     @Autowired
     private EquipmentRepository equipmentRepository;
 
+    // 1. PŘIDÁME RENTAL REPOSITORY
+    @Autowired
+    private RentalRepository rentalRepository;
+
     private User testUser;
     private Equipment testEquipment;
 
     @BeforeEach
     void setUp() {
-        // Protože test běží jako reálný server, vyčistíme DB manuálně před každým testem
+        rentalRepository.deleteAll();
+
         userRepository.deleteAll();
         equipmentRepository.deleteAll();
 
