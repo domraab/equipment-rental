@@ -41,26 +41,29 @@ graph TD
     Controller -->|HTTP 201 Created| Client
 ```
 ### 1.3 Testovací strategie a TDD
-Projekt byl vyvíjen iterativně pomocí TDD (cyklus Red-Green-Refactor), což je prokazatelné v historii Git repozitáře. Testy dodržují principy FIRST a strukturu AAA (Arrange-Act-Assert).
 
-* **Unit testy:** Izolované testování `RentalService`. Externí závislosti (databázové repozitáře) jsou izolovány pomocí **Mockování** (Mockito), abychom mohli testovat hraniční stavy (např. překročení limitů) bez reálné databáze.
-* **Integrační testy:** Ověřují průchod napříč všemi vrstvami. Používáme `TestRestTemplate` pro simulaci reálných HTTP požadavků. Databáze je před každým testem vyčištěna.
-* **Data JPA testy:** Ověření mapování entit a custom queries přes `@DataJpaTest`.
+Projekt byl vyvíjen iterativně pomocí TDD (cyklus Red-Green-Refactor). Testy dodržují principy FIRST a strukturu AAA (Arrange-Act-Assert).
 
-Code Coverage (JaCoCo) :
-Měření pokrytí kódu je zajištěno nástrojem JaCoCo. Vlastní cíl pokrytí byl realisticky stanoven na > 50 % celkového pokrytí instrukcí (Total Line) a > 60 % pokrytí logických větví (Branch). Tohoto cíle bylo úspěšně dosaženo (Total: 58 %, Branch: 68 %). Cílem nebylo nahánět 100 % za každou cenu na netriviálním kódu, ale pokrýt skutečnou byznys logiku.
+Unit testy: Izolované testování tříd v balíčku RentalService. Externí závislosti (databázové repozitáře) jsou izolovány pomocí Mockování (Mockito), abychom mohli testovat hraniční stavy, výpočty cen a limitní podmínky bez reálné databáze.
 
-Reálné výsledky:
+Integrační testy: Ověřují průchod napříč všemi vrstvami. Používáme TestRestTemplate pro simulaci reálných HTTP požadavků klienta. Databáze je před každým testem vyčištěna pro zaručení nezávislosti testů.
 
-* `service` (Instrukce: 68 %, Větve: 68 %): Zde probíhal hlavní vývoj pomocí TDD. Pokrytí logických větví ukazuje, že IF/ELSE podmínky (byznys pravidla) jsou kvalitně otestovány. Zbylá chybějící procenta tvoří okrajové a infrastrukturní výjimky (např. selhání komunikace s databází), které se v izolovaných Unit testech testují neefektivně.
+Data JPA testy: Ověření mapování entit a custom queries přes @DataJpaTest s využitím in-memory H2 databáze.
 
-* `dto` (Instrukce: 100 %): Datové přenosové objekty se podařilo plně pokrýt v rámci integračních testů Controlleru.
+Code Coverage (JaCoCo): Měření pokrytí kódu je zajištěno nástrojem JaCoCo. Cílem nebylo nahánět 100 % za každou cenu na triviálním kódu, ale primárně a neprůstřelně pokrýt skutečnou byznys logiku v doménové vrstvě. Tohoto cíle bylo dosaženo s celkovým pokrytím instrukcí 71 % a pokrytím logických větví 90 %.
 
-* `entity` (Instrukce: 30 %): Třídy obsahují primárně databázové anotace (JPA), gettery, settery a prázdné konstruktory. Tato vrstva postrádá vlastní byznys logiku a psaní testů pouze na "ověření getteru" je anti-pattern, který nepřináší žádnou hodnotu.
+**Reálné výsledky dle vrstev:**
 
-* `controller` (Instrukce: 59 %): REST API je pokryto přes TestRestTemplate. Testujeme "happy path" a hlavní chybové stavy (400, 409). Nepokryté řádky jsou specifické interní výjimky frameworku Spring, které zachytává na pozadí.
+* `service` (Instrukce: 92 %, Větve: 90 %): Zde probíhal hlavní vývoj pomocí TDD. Extrémně vysoké pokrytí logických větví prokazuje, že téměř všechny IF/ELSE podmínky a hraniční stavy (byznys pravidla jako slevy, limity výpůjček a penalizace) jsou kvalitně a důkladně otestovány.
 
-* Hlavní třída `EquipmentRentalApplication` (Instrukce: 37 %): Obsahuje pouze metodu public static void main. Spolehlivost tohoto startéru garantuje samotný framework Spring Boot a není třeba ho uměle testovat.
+* `dto` (Instrukce: 100 %): Datové přenosové objekty (Data Transfer Objects) jsou plně pokryty díky průchodům v rámci integračních testů Controlleru.
+
+* `controller` (Instrukce: 59 %): REST API je otestováno přes `TestRestTemplate`. Testujeme standardní "happy path" i zachytávání chybových stavů (HTTP 400, 409) skrze `GlobalExceptionHandler`. Zbylé nepokryté instrukce představují interní mechanismy a výjimky, které automaticky řeší framework Spring.
+
+* `entity` (Instrukce: 46 %): Databázové třídy obsahují primárně JPA anotace, gettery, settery a prázdné konstruktory. Tato vrstva postrádá komplexní byznys logiku. Psaní testů výhradně za účelem "ověření funkčnosti getteru" je obecně považováno za anti-pattern, který projektu nepřináší žádnou reálnou hodnotu.
+
+* Hlavní třída `EquipmentRentalApplication`  (Instrukce: 37 %): Obsahuje pouze spouštěcí metodu public static void main. Spolehlivost tohoto startéru je garantována samotným frameworkem Spring Boot a není efektivní jej uměle testovat.
+
 ---
 
 ## DevOps, CI/CD a Infrastruktura
